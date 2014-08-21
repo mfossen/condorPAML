@@ -1,0 +1,19 @@
+Executable =/opt/PepPrograms/genewisepaml/codeml
+Arguments =controlfile
+
+log = log.out
+
+Universe = vanilla
+#Universe = scheduler
+
+transfer_input_files = controlfile,seqfile,treefile
+
+output = stdoutfile.txt
+
+Request_Memory = 1500
+Rank = Mips
+should_transfer_files = YES
+
+when_to_transfer_output = ON_EXIT
+Queue
+
