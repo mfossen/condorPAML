@@ -1630,11 +1630,11 @@ class Codeml:
 
             import shutil
            #shutil.copy(path+"/codeml",self._tempdir)
-           # shutil.copy(path+"/submit.sub",self._tempdir)
-            submitPath = "/opt/PepPrograms/genewisepaml/submit.sub"
+           # shutil.copy(path+"/submit.condor",self._tempdir)
+            submitPath = "/opt/PepPrograms/genewisepaml/submit.condor"
             if not (os.path.isfile("./outfile") ) and not (os.path.isfile("./SUBMITTED") ):
                 shutil.copy(submitPath, os.getcwd() )
-                subprocess.call(["condor_submit","./submit.sub"])
+                subprocess.call(["condor_submit","./submit.condor"])
                 open("SUBMITTED","a").close() 
                 os.chdir(path)
                 return 1

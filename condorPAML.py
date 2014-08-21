@@ -4,7 +4,7 @@ import os,glob,sys,subprocess,getopt
 
 fastaDir = "./fastafiles"
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
-submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.sub"
+submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 debug = False
 
 def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
