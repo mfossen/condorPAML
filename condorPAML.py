@@ -31,9 +31,10 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
 
     os.chdir(topdir)
 
-    for fastaDir in glob.glob(topdir+"/*"):
-        if os.path.isdir(fastaDir):
-            os.chdir(fastaDir)
+    #for fastaDir in glob.glob(topdir+"/*"):
+    for dir in os.listdir(topdir):
+        if os.path.isdir(dir):
+            os.chdir(dir)
             if debug == True:
                 out = err = None
                 print os.getcwd()
