@@ -1633,8 +1633,11 @@ class Codeml:
            # shutil.copy(path+"/submit.condor",self._tempdir)
             submitPath = "/opt/PepPrograms/genewisepaml/submit.condor"
             if not (os.path.isfile("./outfile") ) and not (os.path.isfile("./SUBMITTED") ):
-                shutil.copy(submitPath, os.getcwd() )
-                subprocess.call(["condor_submit","./submit.condor"])
+                # shouldn't need this next line anymore, the symlink is set up already
+                #shutil.copy(submitPath, os.getcwd() )
+                #subprocess.Popen(["condor_submit","./submit.condor"])
+                subprocess.Popen(["condor_submit",submitPath])
+
                 open("SUBMITTED","a").close() 
                 os.chdir(path)
                 return 1
@@ -1659,7 +1662,7 @@ class Codeml:
             
         finally:
            # os.chdir(path)
-            print os.getcwd()
+            if not quiet: print os.getcwd()
 
         ## PARSES THE MAIN OUTPUT FILE ##
         for line in self.outputfile.split('\n'):

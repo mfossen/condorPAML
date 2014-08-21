@@ -5,7 +5,6 @@ import os,glob,sys,subprocess,getopt
 fastaDir = "./fastafiles"
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
 submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
-debug = False
 
 def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
@@ -27,16 +26,20 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
                 os.symlink(fullpath , filename)
                 
                 submitFile = runpath + "/" + os.path.basename(submitFileLocation)
-                if os.path.lexists(submitFile): os.remove(submitFile)
-                os.symlink(submitFileLocation , submitFile )
+                #if os.path.lexists(submitFile): os.remove(submitFile)
+                #os.symlink(submitFileLocation , submitFile )
 
     os.chdir(topdir)
 
     for fastaDir in glob.glob(topdir+"/*"):
         if os.path.isdir(fastaDir):
             os.chdir(fastaDir)
-            if debug == True: print os.getcwd()
-            subprocess.Popen([genewisepamlLocation,"-a",glob.glob("*.fasta")[0] ])
+            if debug == True:
+                out = err = None
+                print os.getcwd()
+            else: out = err = open("/dev/null","w")
+            process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
+                    ,stdout=out,stderr=err)
 
 def usage():
     print """Usage: ./condorPAML.py 
@@ -53,19 +56,20 @@ def main(argv):
     except getopt.GetoptError:
         usage()
         sys.exit(1)
+    
+    if len(argv) == 0:
+        usage()
+        sys.exit(0)
 
     for opt, arg in opts:
-        if "-h" or "--help" in opt:
+        if opt in ("-h", "--help"):
             usage()
             sys.exit(0)
 
-        if "--debug" in opt: debug = True
-        
-        if "-s" or "--submit" in opt:
+        #if opt == "--debug": debug = True
+        debug = True if (opt == "--debug") else False
+        if opt in ("-s", "--submit"):
             submit(fastaDir,genewisepamlLocation,submitFileLocation,debug)
 
-        else: usage()
-
-    sys.exit(0)    
 
 main(sys.argv[1:])
