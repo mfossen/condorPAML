@@ -6,7 +6,7 @@ fastaDir = "./fastafiles"
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
 submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 
-def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
+def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
     topdir = os.getcwd()+"/"+fastaDir
@@ -41,7 +41,7 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
             else: out = err = open("/dev/null","w")
             process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
                     ,stdout=out,stderr=err)
-            process.wait()
+            if single: process.wait()
             os.chdir(topdir)
 
 def usage():
@@ -59,9 +59,15 @@ def main(argv):
         usage()
         sys.exit(1)
 
+    global debug
     debug = True if ("debug" in argv) else False
-    if "submit" in argv: 
-        submit(fastaDir,genewisepamlLocation,submitFileLocation,debug)
+
+    if "submit" in argv:
+
+        global single
+        single = True if "single" in argv else False
+
+        submit(fastaDir,genewisepamlLocation,submitFileLocation)
 
 
 main(sys.argv[1:])
