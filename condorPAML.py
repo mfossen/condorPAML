@@ -2,7 +2,8 @@
 
 import os,glob,sys,subprocess,getopt
 
-fastaDir = "./fastafiles"
+#fastaDir = "./fastafiles"
+fastaDir = os.path.realpath("./fastafiles")
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
 submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 
@@ -13,7 +14,7 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
 
     for root, dirs, files in os.walk('.'):
         for fastafile in files: 
-            if root == fastaDir : break
+            #if root == fastaDir : break
             if fastafile.endswith(".fasta"):
                 fullpath = os.path.realpath( root+"/%s" % str(fastafile) )
                 runpath = os.path.realpath( topdir + "/%s" % str(fastafile)[:-6] )
@@ -25,7 +26,7 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                     os.remove(filename)		
                 os.symlink(fullpath , filename)
                 
-                submitFile = runpath + "/" + os.path.basename(submitFileLocation)
+                #submitFile = runpath + "/" + os.path.basename(submitFileLocation)
                 #if os.path.lexists(submitFile): os.remove(submitFile)
                 #os.symlink(submitFileLocation , submitFile )
 
@@ -53,6 +54,30 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                     proc.wait()
                 
             os.chdir(topdir)
+
+
+def cat():
+    nfile = open("results_neutral.txt","w")
+    sfile = open("results_significant.txt","w")
+    os.chdir(fastaDir)
+    for dir in os.listdir(fastaDir):
+        if os.path.isdir(dir):
+            os.chdir(dir)
+            try: 
+                file = open("pamlResults_neutral.txt","r")
+                nfile.write( file.read() )
+                file.close()
+            except: pass
+
+            try:
+                file = open("pamlResults_significant.txt","r")
+                sfile.write( file.read() )
+                file.close()
+            except: pass
+        os.chdir(fastaDir) 
+    
+    nfile.close()
+    sfile.close()
 
 def usage():
     print """Usage: %s <command> <command> ...
