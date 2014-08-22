@@ -57,10 +57,9 @@ def main(argv):
         usage()
         sys.exit(1)
 
-        #if opt == "--debug": debug = True
-        debug = True if (opt == "--debug") else False
-        if opt in ("-s", "--submit"):
-            submit(fastaDir,genewisepamlLocation,submitFileLocation,debug)
+    debug = True if ("debug" in argv) else False
+    if "submit" in argv: 
+        submit(fastaDir,genewisepamlLocation,submitFileLocation,debug)
 
 
 main(sys.argv[1:])
