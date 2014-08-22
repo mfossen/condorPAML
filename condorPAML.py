@@ -43,29 +43,19 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
                     ,stdout=out,stderr=err)
 
 def usage():
-    print """Usage: ./condorPAML.py 
--h, --help\tprint out usage information
+    print """Usage: %s <command>
+commands:
+help\tprint out usage information
 
--s, --submit\tset up directories, make symlinks, and submit jobs to run on Condor
+submit\tset up directories, make symlinks, and run genewisePAML.py
 
---debug\toutput more information to the terminal
-"""
+debug\toutput more information than usual to the terminal
+""" % sys.argv[0]
     
 def main(argv):
-    try:
-        opts, args = getopt.getopt(argv, "hs", ["help","submit","debug"] )
-    except getopt.GetoptError:
+    if len(argv) == 0 or argv[0] == "help":
         usage()
         sys.exit(1)
-    
-    if len(argv) == 0:
-        usage()
-        sys.exit(0)
-
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            usage()
-            sys.exit(0)
 
         #if opt == "--debug": debug = True
         debug = True if (opt == "--debug") else False
