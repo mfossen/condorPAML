@@ -41,6 +41,8 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
             else: out = err = open("/dev/null","w")
             process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
                     ,stdout=out,stderr=err)
+            process.wait()
+            os.chdir(topdir)
 
 def usage():
     print """Usage: %s <command>
