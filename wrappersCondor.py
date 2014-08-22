@@ -1628,26 +1628,13 @@ class Codeml:
 #                 raise IOError, 'codeml error: unknown output' 
           
 
-            import shutil
-           #shutil.copy(path+"/codeml",self._tempdir)
-           # shutil.copy(path+"/submit.condor",self._tempdir)
             submitPath = "/opt/PepPrograms/genewisepaml/submit.condor"
             if not (os.path.isfile("./outfile") ) and not (os.path.isfile("./SUBMITTED") ):
-                # shouldn't need this next line anymore, the symlink is set up already
-                #shutil.copy(submitPath, os.getcwd() )
-                #subprocess.Popen(["condor_submit","./submit.condor"])
                 subprocess.Popen(["condor_submit",submitPath])
 
                 open("SUBMITTED","a").close() 
                 os.chdir(path)
                 return 1
-
-           #import time
-           #while not ( os.path.isfile('./outfile') ):
-           #    print "Sleeping for 1 minutes"
-           #    print time.ctime()
-           #    time.sleep(60)
-
 
             f = open('outfile')
             self.outputfile = f.read()

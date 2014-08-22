@@ -6,7 +6,7 @@ fastaDir = "./fastafiles"
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
 submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 
-def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
+def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
     topdir = os.getcwd()+"/"+fastaDir
@@ -38,39 +38,52 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation, debug=False):
             if debug == True:
                 out = err = None
                 print os.getcwd()
-            else: out = err = open("/dev/null","w")
-            process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
+            else: out = err = open(os.devnull,"w")
+
+            procList = []
+            for num in range( int( singleNum ) ):
+                process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
                     ,stdout=out,stderr=err)
 
+                procList.append(process)
+
+            if single: 
+                for proc in procList:
+                    if debug: print "PID is %s" % proc.pid
+                    proc.wait()
+                
+            os.chdir(topdir)
+
 def usage():
-    print """Usage: ./condorPAML.py 
--h, --help\tprint out usage information
+    print """Usage: %s <command> <command> ...
+commands:
+help\tprint out usage information
 
--s, --submit\tset up directories, make symlinks, and submit jobs to run on Condor
+submit\tset up directories, make symlinks, and run genewisePAML.py
 
---debug\toutput more information to the terminal
-"""
+debug\toutput more information than usual to the terminal
+
+single <num>\t submit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
+""" % sys.argv[0]
     
 def main(argv):
-    try:
-        opts, args = getopt.getopt(argv, "hs", ["help","submit","debug"] )
-    except getopt.GetoptError:
+    if len(argv) == 0 or argv[0] == "help":
         usage()
         sys.exit(1)
-    
-    if len(argv) == 0:
-        usage()
-        sys.exit(0)
 
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            usage()
-            sys.exit(0)
+    global debug
+    debug = True if ("debug" in argv) else False
 
-        #if opt == "--debug": debug = True
-        debug = True if (opt == "--debug") else False
-        if opt in ("-s", "--submit"):
-            submit(fastaDir,genewisepamlLocation,submitFileLocation,debug)
+    if "submit" in argv:
+        global singleNum
+        global single
+
+        single = True if "single" in argv else False
+        try: singleNum = argv[ argv.index("single") + 1 ]
+        except: singleNum = 1
+
+        print singleNum
+        submit(fastaDir,genewisepamlLocation,submitFileLocation)
 
 
 main(sys.argv[1:])
