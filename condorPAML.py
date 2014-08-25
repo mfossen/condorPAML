@@ -2,7 +2,6 @@
 
 import os,glob,sys,subprocess,getopt
 
-#fastaDir = "./fastafiles"
 fastaDir = os.path.realpath("./fastafiles")
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
 submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
@@ -10,14 +9,11 @@ submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
-    #topdir = os.getcwd()+"/"+fastaDir
-
     for root, dirs, files in os.walk('.'):
         for fastafile in files: 
             #if root == fastaDir : break
             if fastafile.endswith(".fasta"):
                 fullpath = os.path.realpath( root+"/%s" % str(fastafile) )
-                #runpath = os.path.realpath( topdir + "/%s" % str(fastafile)[:-6] )
                 runpath = os.path.realpath( fastaDir + "/%s" % str(fastafile)[:-6] )
 
 
@@ -28,36 +24,30 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                     os.remove(filename)		
                 os.symlink(fullpath , filename)
                 
-                #submitFile = runpath + "/" + os.path.basename(submitFileLocation)
-                #if os.path.lexists(submitFile): os.remove(submitFile)
-                #os.symlink(submitFileLocation , submitFile )
-
-    #os.chdir(topdir)
     os.chdir(fastaDir)
 
-    #for fastaDir in glob.glob(topdir+"/*"):
-    #for dir in os.listdir(topdir):
+    procList = []
     for dir in os.listdir(fastaDir):
         if os.path.isdir(dir):
             os.chdir(dir)
-            if debug == True:
+            if debug:
                 out = err = None
                 print os.getcwd()
             else: out = err = open(os.devnull,"w")
 
-            procList = []
-            for num in range( int( singleNum ) ):
-                process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
-                    ,stdout=out,stderr=err)
+            #procList = []
+            #for num in range( int( singleNum ) ):
+            process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
+                ,stdout=out,stderr=err)
 
-                procList.append(process)
+            procList.append(process)
 
-            if single: 
+            if single and len(procList) == singleNum: 
                 for proc in procList:
                     if debug: print "PID is %s" % proc.pid
                     proc.wait()
+                    procList.remove(proc)
                 
-            #os.chdir(topdir)
             os.chdir(fastaDir)
 
     
@@ -96,7 +86,7 @@ submit\tset up directories, make symlinks, and run genewisePAML.py
 
 debug\toutput more information than usual to the terminal
 
-single <num>\t submit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
+single [num]\t submit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
 
 cat\t concatenate all the pamlResults_neutral.txt files into results_neutral.txt and pamlResults_significant.txt files into results_significant.txt in the current working directory
 """ % sys.argv[0]
@@ -117,7 +107,7 @@ def main(argv):
         try: singleNum = argv[ argv.index("single") + 1 ]
         except: singleNum = 1
 
-        print singleNum
+        
         submit(fastaDir,genewisepamlLocation,submitFileLocation)
 
 
