@@ -10,14 +10,16 @@ submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
-    topdir = os.getcwd()+"/"+fastaDir
+    #topdir = os.getcwd()+"/"+fastaDir
 
     for root, dirs, files in os.walk('.'):
         for fastafile in files: 
             #if root == fastaDir : break
             if fastafile.endswith(".fasta"):
                 fullpath = os.path.realpath( root+"/%s" % str(fastafile) )
-                runpath = os.path.realpath( topdir + "/%s" % str(fastafile)[:-6] )
+                #runpath = os.path.realpath( topdir + "/%s" % str(fastafile)[:-6] )
+                runpath = os.path.realpath( fastaDir + "/%s" % str(fastafile)[:-6] )
+
 
                 if not os.path.isdir(runpath): os.mkdir(runpath)
 
@@ -30,7 +32,8 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                 #if os.path.lexists(submitFile): os.remove(submitFile)
                 #os.symlink(submitFileLocation , submitFile )
 
-    os.chdir(topdir)
+    #os.chdir(topdir)
+    os.chdir(fastaDir)
 
     #for fastaDir in glob.glob(topdir+"/*"):
     for dir in os.listdir(topdir):
@@ -53,7 +56,8 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                     if debug: print "PID is %s" % proc.pid
                     proc.wait()
                 
-            os.chdir(topdir)
+            #os.chdir(topdir)
+            os.chdir(fastaDir)
 
 
 def cat():
