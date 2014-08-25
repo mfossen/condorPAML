@@ -36,7 +36,8 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     os.chdir(fastaDir)
 
     #for fastaDir in glob.glob(topdir+"/*"):
-    for dir in os.listdir(topdir):
+    #for dir in os.listdir(topdir):
+    for dir in os.listdir(fastaDir):
         if os.path.isdir(dir):
             os.chdir(dir)
             if debug == True:
@@ -59,7 +60,7 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
             #os.chdir(topdir)
             os.chdir(fastaDir)
 
-
+    
 def cat():
     nfile = open("results_neutral.txt","w")
     sfile = open("results_significant.txt","w")
@@ -67,17 +68,20 @@ def cat():
     for dir in os.listdir(fastaDir):
         if os.path.isdir(dir):
             os.chdir(dir)
-            try: 
-                file = open("pamlResults_neutral.txt","r")
-                nfile.write( file.read() )
-                file.close()
-            except: pass
+            if not os.path.isfile("./DONE"):
+                os.chdir(fastaDir)
+                continue;
+        try: 
+            file = open("pamlResults_neutral.txt","r")
+            nfile.write( file.read() )
+            file.close()
+        except: pass
 
-            try:
-                file = open("pamlResults_significant.txt","r")
-                sfile.write( file.read() )
-                file.close()
-            except: pass
+        try:
+            file = open("pamlResults_significant.txt","r")
+            sfile.write( file.read() )
+            file.close()
+        except: pass
         os.chdir(fastaDir) 
     
     nfile.close()
@@ -93,6 +97,8 @@ submit\tset up directories, make symlinks, and run genewisePAML.py
 debug\toutput more information than usual to the terminal
 
 single <num>\t submit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
+
+cat\t concatenate all the pamlResults_neutral.txt files into results_neutral.txt and pamlResults_significant.txt files into results_significant.txt in the current working directory
 """ % sys.argv[0]
     
 def main(argv):
