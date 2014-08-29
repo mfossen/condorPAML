@@ -39,7 +39,7 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
 
             procList.append(process)
 
-            if single and len(procList) == singleNum: 
+            if single and len(procList) >= singleNum: 
                 for proc in procList:
                     if debug: print "PID is %s" % proc.pid
                     proc.wait()
@@ -101,7 +101,9 @@ def main(argv):
         global single
 
         single = True if "single" in argv else False
-        try: singleNum = argv[ argv.index("single") + 1 ]
+        try: 
+            singleNum = argv[ argv.index("single") + 1 ]
+            print singleNum
         except: singleNum = 1
 
         
