@@ -11,7 +11,6 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
 
     for root, dirs, files in os.walk('.'):
         for fastafile in files: 
-            #if root == fastaDir : break
             if fastafile.endswith(".fasta"):
                 fullpath = os.path.realpath( root+"/%s" % str(fastafile) )
                 runpath = os.path.realpath( fastaDir + "/%s" % str(fastafile)[:-6] )
@@ -35,8 +34,6 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                 print os.getcwd()
             else: out = err = open(os.devnull,"w")
 
-            #procList = []
-            #for num in range( int( singleNum ) ):
             process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
                 ,stdout=out,stderr=err)
 
@@ -109,6 +106,8 @@ def main(argv):
 
         
         submit(fastaDir,genewisepamlLocation,submitFileLocation)
-
+    
+    if "cat" in argv:
+        cat()
 
 main(sys.argv[1:])
