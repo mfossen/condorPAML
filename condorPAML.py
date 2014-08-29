@@ -34,12 +34,13 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                 print os.getcwd()
             else: out = err = open(os.devnull,"w")
 
+
             process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
                 ,stdout=out,stderr=err)
 
             procList.append(process)
 
-            if single and len(procList) >= singleNum: 
+            if single and len(procList) == singleNum: 
                 for proc in procList:
                     if debug: print "PID is %s" % proc.pid
                     proc.wait()
