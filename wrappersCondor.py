@@ -1603,12 +1603,14 @@ class Codeml:
                 f.write( '(%s);\n' %(','.join([i.replace(' ', '_')
                                         for i in self._align.names()])) )
                 f.close()
-            f=open('seqfile', 'w')
-            f.write( self._align.phyml() )
-            f.close()
-            f=open('controlfile', 'w')
-            f.write( self.controlfile )
-            f.close()
+
+            if not os.path.isfile("./SUBMITTED"):
+                f=open('seqfile', 'w')
+                f.write( self._align.phyml() )
+                f.close()
+                f=open('controlfile', 'w')
+                f.write( self.controlfile )
+                f.close()
 	
          	
 #           commandline = (apps['codeml'], 'controlfile')

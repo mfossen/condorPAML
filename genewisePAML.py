@@ -74,7 +74,6 @@ def run_paml(a, tree, alignName, outfile, neutralFile):
             neutralFile.write("%s\t%f\n" % (alignName, p))
     
     
-    
 alignment, directory = get_arguments(sys.argv[1:])
 alignDict = {}
 # Check if alignment or directory was given and calculate stats accordingly
