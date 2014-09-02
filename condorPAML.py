@@ -39,13 +39,23 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                 ,stdout=out,stderr=err)
 
             procList.append(process)
+            
+            if debug:
+                print single
+                print len(procList)
+                print singleNum
 
             if single and len(procList) == singleNum: 
-                for proc in procList:
-                    if debug: print "PID is %s" % proc.pid
-                    proc.wait()
-                    procList.remove(proc)
-                
+                for item in procList:
+                    if debug: 
+                        print "PID is %s" % item.pid
+                        print "List length:\t%d" % len(procList)
+                    try:
+                        print "waiting"
+                        item.wait()
+                        procList.remove(item)
+                    except: break
+
             os.chdir(fastaDir)
 
     
@@ -103,9 +113,7 @@ def main(argv):
 
         single = True if "single" in argv else False
         try: 
-            singleNum = argv[ argv.index("single") + 1 ]
-            if debug:
-                print singleNum
+            singleNum = int( argv[ argv.index("single") + 1 ] )
 
         except: singleNum = 1
 
