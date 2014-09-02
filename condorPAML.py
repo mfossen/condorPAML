@@ -95,7 +95,7 @@ def main(argv):
         sys.exit(1)
 
     global debug
-    debug = True if ("debug" in argv) else False
+    debug = True if "debug" in argv else False
 
     if "submit" in argv:
         global singleNum
@@ -104,7 +104,9 @@ def main(argv):
         single = True if "single" in argv else False
         try: 
             singleNum = argv[ argv.index("single") + 1 ]
-            print singleNum
+            if debug:
+                print singleNum
+
         except: singleNum = 1
 
         
