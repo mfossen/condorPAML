@@ -9,9 +9,13 @@ submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
+    numFiles = 0
     for root, dirs, files in os.walk('.'):
         for fastafile in files: 
             if fastafile.endswith(".fasta"):
+
+                numFiles += 1
+
                 fullpath = os.path.realpath( root+"/%s" % str(fastafile) )
                 runpath = os.path.realpath( fastaDir + "/%s" % str(fastafile)[:-6] )
 
@@ -19,6 +23,7 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                 if not os.path.isdir(runpath): os.mkdir(runpath)
 
                 filename = runpath+"/%s" % str(fastafile) 
+
                 if os.path.lexists(filename):
                     os.remove(filename)		
                 os.symlink(fullpath , filename)
@@ -26,12 +31,18 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     os.chdir(fastaDir)
 
     procList = []
+    curFile = 0
+
     for dir in os.listdir(fastaDir):
         if os.path.isdir(dir):
             os.chdir(dir)
             if debug:
                 out = err = None
-                print os.getcwd()
+                print "Current Directory:\t%s" % os.getcwd()
+
+                curFile += 1
+                print "On file %d out of %d" % (curFile,numFiles)
+
             else: out = err = open(os.devnull,"w")
 
 
@@ -40,18 +51,13 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
 
             procList.append(process)
             
-            if debug:
-                print single
-                print len(procList)
-                print singleNum
-
             if single and len(procList) == singleNum: 
                 for item in procList:
                     if debug: 
                         print "PID is %s" % item.pid
                         print "List length:\t%d" % len(procList)
                     try:
-                        print "waiting"
+                        print "Waiting"
                         item.wait()
                         procList.remove(item)
                     except: break
@@ -60,8 +66,8 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
 
     
 def cat():
-    nfile = open("results_neutral.txt","w")
-    sfile = open("results_significant.txt","w")
+    nfile = open("results_neutral.txt","w+")
+    sfile = open("results_significant.txt","w+")
     os.chdir(fastaDir)
     for dir in os.listdir(fastaDir):
         if os.path.isdir(dir):
@@ -82,7 +88,14 @@ def cat():
         except: pass
         os.chdir(fastaDir) 
     
+    nfile.seek(0)
+    lines = nfile.readlines()
+    nfile.writelines( sorted(lines) )
     nfile.close()
+
+    sfile.seek(0)
+    lines = sfile.readlines()
+    sfile.writelines( sorted(lines) )
     sfile.close()
 
 def usage():
