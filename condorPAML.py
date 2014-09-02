@@ -12,9 +12,8 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     numFiles = 0
     for root, dirs, files in os.walk('.'):
         for fastafile in files: 
-            if fastafile.endswith(".fasta"):
+            if fastafile.endswith(".fasta") and not os.path.islink(fastafile):
 
-                numFiles += 1
 
                 fullpath = os.path.realpath( root+"/%s" % str(fastafile) )
                 runpath = os.path.realpath( fastaDir + "/%s" % str(fastafile)[:-6] )
@@ -24,9 +23,11 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
 
                 filename = runpath+"/%s" % str(fastafile) 
 
-                if os.path.lexists(filename):
-                    os.remove(filename)		
                 os.symlink(fullpath , filename)
+                os.chdir(runpath)
+                open("SUBMITTED","w").close()
+
+                numFiles += 1
                 
     os.chdir(fastaDir)
 
