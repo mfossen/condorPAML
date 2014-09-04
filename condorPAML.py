@@ -2,34 +2,34 @@
 
 import os,glob,sys,subprocess,getopt
 
-#inputDir = os.path.realpath(".")
-#fastaDir = os.path.realpath("./fastafiles")
+inputDir = os.path.realpath(".")
+fastaDir = os.path.realpath("./fastafiles")
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
-#submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 
-def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
+def submit(fastaDir, genewisePAMLLocation):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
     numFiles = 0
     #for root, dirs, files in os.walk('.'):
-    for dirs in os.listdir(inputDir):
-        for fastafile in files: 
-            if fastafile.endswith(".fasta") and not os.path.islink(fastafile):
+    for fastafile in os.listdir(inputDir):
+        if os.path.isfile(fastafile): 
 
+            if fastafile.endswith(".fasta"):
 
-                fullpath = os.path.realpath( root+"/%s" % str(fastafile) )
+                fullpath = os.path.realpath(fastafile)
                 runpath = os.path.realpath( fastaDir + "/%s" % str(fastafile)[:-6] )
-
 
                 if not os.path.isdir(runpath): os.mkdir(runpath)
 
                 filename = runpath+"/%s" % str(fastafile) 
 
-                os.symlink(fullpath , filename)
+                try: os.symlink(fullpath , filename)
+                except: pass
                 os.chdir(runpath)
                 open("SUBMITTED","w").close()
 
                 numFiles += 1
+                os.chdir(inputDir)
                 
     os.chdir(fastaDir)
 
@@ -126,8 +126,6 @@ def main(argv):
     if "submit" in argv:
         global singleNum
         global single
-        global inputDir
-        global fastaDir
 
         single = True if "single" in argv else False
         try: 
@@ -135,17 +133,7 @@ def main(argv):
 
         except: singleNum = 1
         
-        try:
-            inputDir = str( argv[ argv.index("inputDir") + 1 ] )
-
-        except: inputDir = os.path.realpath(".")
-
-        try:
-            fastaDir = str( argv[ argv.index("outputDir") + 1 ] )
-
-        except: fastaDir = os.path.realpath("./fastafiles")
-
-        submit(fastaDir,genewisepamlLocation,submitFileLocation)
+        submit(fastaDir,genewisepamlLocation)
     
     if "cat" in argv:
         cat()
