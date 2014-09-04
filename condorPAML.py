@@ -89,9 +89,16 @@ def submit(fastaDir, genewisepamlLocation):
             os.chdir(fastaDir) # change back into the fastaDir and process the next folder that contains a fasta file
 
     
+# the cat function will find all the individual results and concatenate them and sort them 
+#  into two overall results files
 def cat():
+    # open two files for reading and writing
     nfile = open("results_neutral.txt","w+")
     sfile = open("results_significant.txt","w+")
+
+    # Process the folders that have the fasta files and make sure they contain the file
+    #  DONE before trying to open the result files for reading, and write their contents 
+    #  into the two concatenated results files
     os.chdir(fastaDir)
     for dir in os.listdir(fastaDir):
         if os.path.isdir(dir):
@@ -112,6 +119,8 @@ def cat():
         except: pass
         os.chdir(fastaDir) 
     
+    # Return to the beginning of the files using seek(0), then read the lines into a list and again 
+    #  return to the beginning of the file before writing out the sorted results and closing.
     nfile.seek(0)
     lines = nfile.readlines()
     nfile.seek(0)
