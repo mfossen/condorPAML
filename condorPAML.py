@@ -1,42 +1,61 @@
 #!/usr/bin/env python2.6
 
-import os,glob,sys,subprocess,getopt
+import os
+import glob
+import sys
+import subprocess
+import getopt
 
+# default paths the file locations
 inputDir = os.path.realpath(".")
 fastaDir = os.path.realpath("./fastafiles")
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
 
-def submit(fastaDir, genewisePAMLLocation):
+# submit will create the necessary directories and set up symlinks before calling
+#  genewisePAML.py that uses wrappersCondor.py (modified from the normal wrappers.py
+#  that egglib normally provides) to submit a job to condor
+def submit(fastaDir, genewisepamlLocation):
+
+    # create a directory to hold the files, if it doesn't already exist
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
-    numFiles = 0
+    numFiles = 0 # keep track of how many files have been processed and how many are left
+
+    # get a list of every file and directory in "inputDir" and loop through them
     for fastafile in os.listdir(inputDir):
-        if os.path.isfile(fastafile): 
+
+        if os.path.isfile(fastafile): # only process files in the current working directory
 
             if fastafile.endswith(".fasta"):
 
                 fullpath = os.path.realpath(fastafile)
+
+                # create folders under "fastaDir" using the name of the fasta file without the extension
                 runpath = os.path.realpath( fastaDir + "/%s" % str(fastafile)[:-6] )
 
                 if not os.path.isdir(runpath): os.mkdir(runpath)
 
                 filename = runpath+"/%s" % str(fastafile) 
 
+                # use a symlink from the original file to the working directories to save on 
+                #  time and space that would be spent copying them
                 try: os.symlink(fullpath , filename)
                 except: pass
-                os.chdir(runpath)
-                open("SUBMITTED","w").close()
 
-                numFiles += 1
-                os.chdir(inputDir)
+                os.chdir(runpath) # change into the created folder
+                open("SUBMITTED","w").close() # create a file to show the job has been submitted 
+
+                numFiles += 1 
+                os.chdir(inputDir) # change back into the folder containing the .fasta files
                 
-    os.chdir(fastaDir)
 
-    procList = []
-    curFile = 0
+    os.chdir(fastaDir) # change into the folder where the jobs will be submitted
 
-    for dir in os.listdir(fastaDir):
-        if os.path.isdir(dir):
+    procList = [] # keep a list of processes that have been submitted to control resource usage
+    curFile = 0 # keep track of the progress
+
+    for dir in os.listdir(fastaDir): # loop through every directory that was created in the last loop
+        if os.path.isdir(dir): # make sure it's a directory, and change into it
             os.chdir(dir)
             if debug:
                 out = err = None
@@ -45,14 +64,17 @@ def submit(fastaDir, genewisePAMLLocation):
                 curFile += 1
                 print "On file %d out of %d" % (curFile,numFiles)
 
-            else: out = err = open(os.devnull,"w")
+            else: out = err = open(os.devnull,"w") # if condorPAML.py isn't called with the debug
+                                                   #  option, send output to /dev/null
 
-
+            # submit the job in the background and add the object that is returned to the process lit
             process = subprocess.Popen([genewisepamlLocation,"-a", glob.glob("*.fasta")[0] ] \
                 ,stdout=out,stderr=err)
 
             procList.append(process)
             
+            # if the single option was used, start the number of jobs that was specified and
+            #  wait for them to finish before removing the process from the list and continuing
             if single and len(procList) == singleNum: 
                 for item in procList:
                     if debug: 
@@ -64,7 +86,7 @@ def submit(fastaDir, genewisePAMLLocation):
                         procList.remove(item)
                     except: break
 
-            os.chdir(fastaDir)
+            os.chdir(fastaDir) # change back into the fastaDir and process the next folder that contains a fasta file
 
     
 def cat():
