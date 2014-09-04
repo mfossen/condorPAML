@@ -145,6 +145,10 @@ debug\toutput more information to the terminal
 single [num]\t submit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
 
 cat\t concatenate all the pamlResults_neutral.txt files into results_neutral.txt and pamlResults_significant.txt files into results_significant.txt in the current working directory
+
+
+
+The submit command will have to be used twice - once to submit the jobs to condor, then once more to process the file that gets returned and write out the results
 """ % sys.argv[0]
     
 def main(argv):
