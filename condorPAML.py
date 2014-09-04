@@ -2,15 +2,17 @@
 
 import os,glob,sys,subprocess,getopt
 
-fastaDir = os.path.realpath("./fastafiles")
+#inputDir = os.path.realpath(".")
+#fastaDir = os.path.realpath("./fastafiles")
 genewisepamlLocation = "/opt/PepPrograms/genewisepaml/genewisePAML.py"
-submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
+#submitFileLocation = "/opt/PepPrograms/genewisepaml/submit.condor"
 
 def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
     numFiles = 0
-    for root, dirs, files in os.walk('.'):
+    #for root, dirs, files in os.walk('.'):
+    for dirs in os.listdir(inputDir):
         for fastafile in files: 
             if fastafile.endswith(".fasta") and not os.path.islink(fastafile):
 
@@ -58,7 +60,7 @@ def submit(fastaDir, genewisePAMLLocation, submitFileLocation):
                         print "PID is %s" % item.pid
                         print "List length:\t%d" % len(procList)
                     try:
-                        print "Waiting"
+                        if debug:print "Waiting"
                         item.wait()
                         procList.remove(item)
                     except: break
@@ -124,14 +126,25 @@ def main(argv):
     if "submit" in argv:
         global singleNum
         global single
+        global inputDir
+        global fastaDir
 
         single = True if "single" in argv else False
         try: 
             singleNum = int( argv[ argv.index("single") + 1 ] )
 
         except: singleNum = 1
-
         
+        try:
+            inputDir = str( argv[ argv.index("inputDir") + 1 ] )
+
+        except: inputDir = os.path.realpath(".")
+
+        try:
+            fastaDir = str( argv[ argv.index("outputDir") + 1 ] )
+
+        except: fastaDir = os.path.realpath("./fastafiles")
+
         submit(fastaDir,genewisepamlLocation,submitFileLocation)
     
     if "cat" in argv:
