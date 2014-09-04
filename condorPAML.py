@@ -10,7 +10,6 @@ def submit(fastaDir, genewisePAMLLocation):
     if not os.path.isdir(fastaDir): os.mkdir(fastaDir)
 
     numFiles = 0
-    #for root, dirs, files in os.walk('.'):
     for fastafile in os.listdir(inputDir):
         if os.path.isfile(fastafile): 
 
@@ -93,11 +92,13 @@ def cat():
     
     nfile.seek(0)
     lines = nfile.readlines()
+    nfile.seek(0)
     nfile.writelines( sorted(lines) )
     nfile.close()
 
     sfile.seek(0)
     lines = sfile.readlines()
+    sfile.seek(0)
     sfile.writelines( sorted(lines) )
     sfile.close()
 
@@ -108,7 +109,7 @@ help\tprint out usage information
 
 submit\tset up directories, make symlinks, and run genewisePAML.py
 
-debug\toutput more information than usual to the terminal
+debug\toutput more information to the terminal
 
 single [num]\t submit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
 
