@@ -1,4 +1,4 @@
-genewisePAML
+Running genewisePAML.py on Condor
 ============
 
 All the necessary files are stored in SNPsnap under the directory /opt/PepPrograms/genewisepaml
