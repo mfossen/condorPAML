@@ -133,6 +133,24 @@ def cat():
     sfile.writelines( sorted(lines) )
     sfile.close()
 
+def remove():
+   os.chdir(fastaDir)
+   for dir in os.listdir(fastaDir):
+    if os.path.isdir(dir):
+      os.chdir(dir)
+      if os.path.isfile("./SUBMITTED") and not os.path.isfile("./DONE"):
+        try: 
+          submit = os.path.realpath("./SUBMITTED")
+          os.unlink(submit)
+          if debug:
+            print "Removed %s" % submit
+        except: pass
+
+    os.chdir(fastaDir)
+
+
+
+
 def usage():
     print """Usage: %s <command> <command> ...
 commands:
@@ -173,5 +191,9 @@ def main(argv):
     
     if "cat" in argv:
         cat()
+
+    if "remove" in argv:
+      remove()
+
 
 main(sys.argv[1:])
