@@ -7,9 +7,9 @@ The script that handles everything is named "condorPAML.py" and can be copied wh
 
 condorPAML.py should be run in a directory that contains .fasta files, and will create a directory that is named "fastafiles" to work in unless you edit the script to something different.
 
-So it will look like this after running "./condorPAML.py submit" in a directory named "files" that contains file1.fasta, file2.fasta, and file3.fasta:
+So it will look like this after running "./condorPAML.py submit" in a directory named "files" that contains file1.fasta, file2.fasta, and file3.fasta
 
-'''
+```
 /home/user/files
                       |--file1.fasta
                       |--file2.fasta
@@ -25,7 +25,7 @@ So it will look like this after running "./condorPAML.py submit" in a directory 
                                        |--file3/
                                                  |--file3.fasta
                                                  |--other files...
-'''
+```
 
 The basic commands can be seen by running "./condorPAML.py help"
 
