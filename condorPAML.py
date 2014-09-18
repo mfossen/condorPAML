@@ -134,19 +134,19 @@ def cat():
     sfile.close()
 
 def remove():
-   os.chdir(fastaDir)
-   for dir in os.listdir(fastaDir):
-    if os.path.isdir(dir):
-      os.chdir(dir)
-      if os.path.isfile("./SUBMITTED") and not os.path.isfile("./DONE"):
-        try: 
-          submit = os.path.realpath("./SUBMITTED")
-          os.unlink(submit)
-          if debug:
-            print "Removed %s" % submit
-        except: pass
-
     os.chdir(fastaDir)
+    for dir in os.listdir(fastaDir):
+        if os.path.isdir(dir):
+          os.chdir(dir)
+          if os.path.isfile("./SUBMITTED") and not os.path.isfile("./DONE"):
+            try: 
+                submit = os.path.realpath("./SUBMITTED")
+                os.unlink(submit)
+                if debug:
+                    print "Removed %s" % submit
+            except: pass
+
+        os.chdir(fastaDir)
 
 
 
@@ -160,10 +160,11 @@ submit\tset up directories, make symlinks, and run genewisePAML.py
 
 debug\toutput more information to the terminal
 
-single [num]\t submit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
+single [num]\tsubmit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
 
-cat\t concatenate all the pamlResults_neutral.txt files into results_neutral.txt and pamlResults_significant.txt files into results_significant.txt in the current working directory
+cat\tconcatenate all the pamlResults_neutral.txt files into results_neutral.txt and pamlResults_significant.txt files into results_significant.txt in the current working directory
 
+remove\tuseful for if condor jobs were interrupted before completing. remove will delete the file SUBMITTED if genewisePAML.py didn't succeed and allow the jobs to be resubmitted to condor
 
 
 The submit command will have to be used twice - once to submit the jobs to condor, then once more to process the file that gets returned and write out the results
@@ -193,7 +194,7 @@ def main(argv):
         cat()
 
     if "remove" in argv:
-      remove()
+        remove()
 
 
 main(sys.argv[1:])
