@@ -150,6 +150,10 @@ def remove():
             try: 
                 submit = os.path.realpath("./SUBMITTED")
                 os.unlink(submit)
+               
+                os.unlink("./M1a/SUBMITTED")
+                os.unlink("./M2a/SUBMITTED")
+                
                 if debug:
                     print "Removed %s" % submit
             except: pass

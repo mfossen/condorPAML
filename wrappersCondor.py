@@ -1631,7 +1631,7 @@ class Codeml:
           
 
             submitPath = "/opt/PepPrograms/genewisepaml/submit.condor"
-            if not (os.path.isfile("./outfile") ) and not (os.path.isfile("./SUBMITTED") ):
+            if not os.path.isfile("./SUBMITTED"):
                 subprocess.Popen(["condor_submit",submitPath])
 
                 open("SUBMITTED","a").close() 
