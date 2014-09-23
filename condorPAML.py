@@ -144,6 +144,7 @@ def remove():
         print "%s not found" % fastaDir
         return
     for dir in os.listdir(fastaDir):
+
         if os.path.isdir(dir):
           os.chdir(dir)
           if os.path.isfile("./SUBMITTED") and not os.path.isfile("./DONE"):
@@ -151,6 +152,7 @@ def remove():
                 submit = os.path.realpath("./SUBMITTED")
                 os.unlink(submit)
                
+                # Remove the placeholder files in the subdirectories
                 os.unlink("./M1a/SUBMITTED")
                 os.unlink("./M2a/SUBMITTED")
                 
@@ -159,9 +161,6 @@ def remove():
             except: pass
 
         os.chdir(fastaDir)
-
-
-
 
 def usage():
     print """Usage: %s <command> <command> ...
@@ -207,6 +206,5 @@ def main(argv):
 
     if "remove" in argv:
         remove()
-
 
 main(sys.argv[1:])
