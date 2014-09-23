@@ -99,7 +99,10 @@ def cat():
     # Process the folders that have the fasta files and make sure they contain the file
     #  DONE before trying to open the result files for reading, and write their contents 
     #  into the two concatenated results files
-    os.chdir(fastaDir)
+    try: os.chdir(fastaDir)
+    except:
+        print "%s not found" % fastaDir
+        return
     for dir in os.listdir(fastaDir):
         if os.path.isdir(dir):
             os.chdir(dir)
@@ -133,8 +136,13 @@ def cat():
     sfile.writelines( sorted(lines) )
     sfile.close()
 
+# Remove the SUBMITTED placeholder file from each directory if it hasn't been fully
+#  processed yet
 def remove():
-    os.chdir(fastaDir)
+    try: os.chdir(fastaDir)
+    except:
+        print "%s not found" % fastaDir
+        return
     for dir in os.listdir(fastaDir):
         if os.path.isdir(dir):
           os.chdir(dir)
@@ -158,7 +166,7 @@ help\tprint out usage information
 
 submit\tset up directories, make symlinks, and run genewisePAML.py
 
-debug\toutput more information to the terminal
+verbose\toutput more information to the terminal
 
 single [num]\tsubmit <num> jobs at a time, useful to keep an eye on output or if the server is being used heavily by other processes
 
@@ -176,7 +184,7 @@ def main(argv):
         sys.exit(1)
 
     global debug
-    debug = True if "debug" in argv else False
+    debug = True if "verbose" in argv else False
 
     if "submit" in argv:
         global singleNum
