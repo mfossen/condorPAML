@@ -146,21 +146,36 @@ def remove():
     for dir in os.listdir(fastaDir):
 
         if os.path.isdir(dir):
-          os.chdir(dir)
-          if os.path.isfile("./SUBMITTED") and not os.path.isfile("./DONE"):
-            try: 
-                submit = os.path.realpath("./SUBMITTED")
-                os.unlink(submit)
-               
-                # Remove the placeholder files in the subdirectories
-                os.unlink("./M1a/SUBMITTED")
-                os.unlink("./M2a/SUBMITTED")
-                
-                if debug:
-                    print "Removed %s" % submit
-            except: pass
+            dirpath = os.path.realpath(dir)  
+            try: os.chdir(dirpath)
+            except: print "%s not found" % dirpath
+            
+            if os.path.isfile("./SUBMITTED") and not os.path.isfile("./DONE"):
+                try: 
+                    submit = os.path.realpath("./SUBMITTED")
+                    os.unlink(submit)
+             
+                    if debug: print "Removed %s" % submit
 
-        os.chdir(fastaDir)
+                    # Remove the placeholder files in the subdirectories
+                    for model in os.listdir(dirpath):
+                        if os.path.isdir(model):
+                            try:
+                                os.chdir(model)
+                                submitted = os.path.realpath("./SUBMITTED")
+                                os.unlink(submitted)
+
+                                if debug: print "Removed %s" % submitted
+
+                                os.chdir(dirpath) 
+                            except: pass
+             
+                except: pass
+
+        try: os.chdir(fastaDir)
+        except: print "%s not found" % fastaDir
+
+
 
 def usage():
     print """Usage: %s <command> <command> ...
